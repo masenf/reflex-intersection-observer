@@ -12,8 +12,14 @@ class State(rx.State):
     def handle_intersect(self, entry):
         print(f"Intersected! {entry} Load more items.")
         self.items.extend(
-            [f"Item {ix}" for ix in range(len(self.items), len(self.items) + BATCH_SIZE)]
+            [
+                f"Item {ix}"
+                for ix in range(len(self.items), len(self.items) + BATCH_SIZE)
+            ]
         )
+
+    def handle_non_intersect(self, entry):
+        print(f"Non-intersected! {entry}")
 
 
 def index() -> rx.Component:
@@ -27,6 +33,7 @@ def index() -> rx.Component:
                     root_margin="0px",
                     threshold=0.9,
                     on_intersect=State.handle_intersect,
+                    on_non_intersect=State.handle_non_intersect,
                     # The target object doesn't need to be visible.
                     # visibility="hidden"
                 ),
