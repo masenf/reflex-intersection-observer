@@ -1,2 +1,2 @@
-reflex==0.4.4a1
+reflex>=0.4.6
 reflex-intersection-observer
