@@ -18,4 +18,4 @@ jobs:
     - name: Install package
       run: pip install .
     - name: Publish to PyPI
-      run: reflex component publish -t ${{ secrets.PYPI_TOKEN }}
+      run: reflex component publish -t ${{ secrets.PYPI_TOKEN }} --no-share --no-validate-project-info
