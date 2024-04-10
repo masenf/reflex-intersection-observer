@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "reflex-intersection-observer"
-version = "0.0.2"
+version = "0.0.3"
 description = "Reflex custom component intersection-observer"
 readme = "README.md"
 license = { text = "Apache-2.0" }
@@ -18,7 +18,8 @@ keywords = [
     "reflex-custom-components"]
 
 dependencies = [
-    "reflex>=0.4.2"
+    "jinja2>=3.1.2",
+    "reflex>=0.4.6",
 ]
 
 classifiers = [
