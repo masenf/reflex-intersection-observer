@@ -7,14 +7,26 @@ import reflex as rx
 
 INTERSECTION_OBSERVER_JS = """
 // reflex_intersection_observer.IntersectionObserver
+const [enableObserver_{{ ref }}, setEnableObserver_{{ ref }}] = useState(1)
 useEffect(() => {
+    if (!{{ root }}) {
+        // The root element is not found, so trigger the effect again, later.
+        console.log("Warning: observation target {{ root }} not found, will try again.")
+        const timeout = setTimeout(
+            () => setEnableObserver_{{ ref }}((cnt) => cnt + 1),
+            enableObserver_{{ ref }} * 100,
+        )
+        return () => clearTimeout(timeout)
+    }
+    const on_intersect = {{ on_intersect }}
+    const on_non_intersect = {{ on_non_intersect }}
     const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
-            if ({{ on_intersect }} && entry.isIntersecting) {
-                {{ on_intersect }}(extractEntry(entry))
+            if (on_intersect !== undefined && entry.isIntersecting) {
+                on_intersect(extractEntry(entry))
             }
-            if ({{ on_non_intersect }} && !entry.isIntersecting) {
-                {{ on_non_intersect }}(extractEntry(entry))
+            if (on_non_intersect !== undefined && !entry.isIntersecting) {
+                on_non_intersect(extractEntry(entry))
             }
         });
     }, {
@@ -26,7 +38,7 @@ useEffect(() => {
         observer.observe({{ ref }}.current)
         return () => observer.disconnect()
     }
-}, []);
+}, [ enableObserver_{{ ref }} ]);
 """
 
 
@@ -51,7 +63,10 @@ class IntersectionObserver(rx.el.Div):
         return rx.utils.imports.merge_imports(
             super()._get_imports(),
             {
-                "react": [rx.utils.imports.ImportVar(tag="useEffect")],
+                "react": [
+                    rx.utils.imports.ImportVar(tag="useEffect"),
+                    rx.utils.imports.ImportVar(tag="useState"),
+                ],
             },
         )
 
