@@ -11,7 +11,7 @@ const [enableObserver_{{ ref }}, setEnableObserver_{{ ref }}] = useState(1)
 useEffect(() => {
     if (!{{ root }}) {
         // The root element is not found, so trigger the effect again, later.
-        console.log("Warning: observation target {{ root }} not found, will try again.")
+        console.log("Warning: observation target " + {{ root }} + " not found, will try again.")
         const timeout = setTimeout(
             () => setEnableObserver_{{ ref }}((cnt) => cnt + 1),
             enableObserver_{{ ref }} * 100,
