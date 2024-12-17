@@ -1,4 +1,5 @@
 """Reflex custom component IntersectionObserver."""
+from __future__ import annotations
 
 from jinja2 import Environment
 
@@ -42,13 +43,17 @@ useEffect(() => {
 """
 
 
+def _intersect_event_signature(data: rx.Var[dict[str, float | bool]]) -> tuple[rx.Var[dict[str, float | bool]]]:
+    return data,
+
+
 class IntersectionObserver(rx.el.Div):
     root: rx.Var[str]
     root_margin: rx.Var[str]
     threshold: rx.Var[float]
 
-    on_intersect: rx.EventHandler[lambda e0: [e0]]
-    on_non_intersect: rx.EventHandler[lambda e0: [e0]]
+    on_intersect: rx.EventHandler[_intersect_event_signature]
+    on_non_intersect: rx.EventHandler[_intersect_event_signature]
 
     @classmethod
     def create(cls, *children, **props):
