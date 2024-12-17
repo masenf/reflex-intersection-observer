@@ -2,7 +2,7 @@ import reflex as rx
 
 from reflex_intersection_observer import intersection_observer
 
-from . import scroll_to_bottom
+from . import readme, scroll_to_bottom
 
 
 BATCH_SIZE = 15
@@ -80,4 +80,8 @@ app.add_page(
     scroll_to_bottom.page,
     route="/scroll-to-bottom",
     on_load=scroll_to_bottom.MessageGenerator.on_load,
+)
+app.add_page(
+    readme.page,
+    route="/readme",
 )
