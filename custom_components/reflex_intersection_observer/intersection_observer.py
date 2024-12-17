@@ -111,7 +111,7 @@ const extractEntry = (entry) => ({
                 root=(
                     f"document.querySelector({rx.utils.format.format_prop(self.root).strip('{}')})"
                     if self.root is not None
-                    else "null"
+                    else "document"
                 ),
                 root_margin=rx.utils.format.format_prop(
                     self.root_margin if self.root_margin is not None else "0px"
