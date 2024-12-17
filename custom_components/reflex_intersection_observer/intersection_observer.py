@@ -1,4 +1,5 @@
 """Reflex custom component IntersectionObserver."""
+
 from __future__ import annotations
 
 from jinja2 import Environment
@@ -43,14 +44,22 @@ useEffect(() => {
 """
 
 
-def _intersect_event_signature(data: rx.Var[dict[str, float | bool]]) -> tuple[rx.Var[dict[str, float | bool]]]:
-    return data,
+class IntersectionObserverEntry(rx.Base):
+    intersection_ratio: float
+    is_intersecting: bool
+    time: float
+
+
+def _intersect_event_signature(
+    data: rx.Var[IntersectionObserverEntry],
+) -> tuple[rx.Var[IntersectionObserverEntry]]:
+    return (data,)
 
 
 class IntersectionObserver(rx.el.Div):
     root: rx.Var[str]
-    root_margin: rx.Var[str]
-    threshold: rx.Var[float]
+    root_margin: rx.Var[str] = rx.Var.create("0px")
+    threshold: rx.Var[float] = rx.Var.create(1.0)
 
     on_intersect: rx.EventHandler[_intersect_event_signature]
     on_non_intersect: rx.EventHandler[_intersect_event_signature]
@@ -88,16 +97,6 @@ const extractEntry = (entry) => ({
         on_non_intersect = self.event_triggers.get("on_non_intersect")
         if on_intersect is None and on_non_intersect is None:
             return None
-        if isinstance(on_intersect, rx.EventChain):
-            on_intersect = rx.utils.format.wrap(
-                rx.utils.format.format_prop(on_intersect).strip("{}"),
-                "(",
-            )
-        if isinstance(on_non_intersect, rx.EventChain):
-            on_non_intersect = rx.utils.format.wrap(
-                rx.utils.format.format_prop(on_non_intersect).strip("{}"),
-                "(",
-            )
         if on_intersect is None:
             on_intersect = "undefined"
         if on_non_intersect is None:
@@ -109,18 +108,12 @@ const extractEntry = (entry) => ({
                 on_intersect=on_intersect,
                 on_non_intersect=on_non_intersect,
                 root=(
-                    f"document.querySelector({rx.utils.format.format_prop(self.root).strip('{}')})"
+                    f"document.querySelector({str(self.root)})"
                     if self.root is not None
                     else "document"
                 ),
-                root_margin=rx.utils.format.format_prop(
-                    self.root_margin if self.root_margin is not None else "0px"
-                ).strip("{}"),
-                threshold=(
-                    self.threshold._var_name_unwrapped
-                    if self.threshold is not None
-                    else "1.0"
-                ),
+                root_margin=self.root_margin,
+                threshold=self.threshold,
                 ref=self.get_ref(),
             )
         )

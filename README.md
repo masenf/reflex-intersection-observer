@@ -47,15 +47,11 @@ The following events are emitted by `intersection_observer`:
 * `on_intersect` - fired when the target element intersects with the root element.
 * `on_non_intersect` - fired when the target element does not intersect with the root element.
 
-Both of these events provide a dictionary with intersection details:
+Both of these events provide an `IntersectionObserverEntry` with intersection details:
 
-```
-{
-    "intersection_ratio": how much of the target element is intersection (0 - 1).
-    "is_intersecting": true/false based on whether the observer is intersecting or not
-    "time": relative timestamp when the intersection occured
-}
-```
+* `intersection_ratio`: how much of the target element is intersection (0 - 1).
+* `is_intersecting`: true/false based on whether the observer is intersecting or not
+* `time`: relative timestamp when the intersection occured
 
 See [IntersectionObserver API](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver)
 docs on MDN for more information about how the API works.

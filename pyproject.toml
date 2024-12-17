@@ -11,7 +11,7 @@ version = "0.0.5"
 description = "Reflex custom component intersection-observer"
 readme = "README.md"
 license = { text = "Apache-2.0" }
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 authors = [{ name = "Masen Furer", email = "m_github@0x26.net" }]
 keywords = [
     "reflex",
@@ -19,7 +19,7 @@ keywords = [
 
 dependencies = [
     "jinja2>=3.1.2",
-    "reflex>=0.4.6",
+    "reflex>=0.6.6",
 ]
 
 classifiers = [
