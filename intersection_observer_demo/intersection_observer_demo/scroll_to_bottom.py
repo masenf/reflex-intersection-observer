@@ -1,48 +1,31 @@
-import asyncio
-
 import reflex as rx
 
 from reflex_intersection_observer import intersection_observer
 
 
 BOTTOM_ELEMENT_ID = "bottom"
-
-
-class ScrollHandlingState(rx.State):
-    def scroll_to_bottom(self):
-        return rx.call_script(
-            f"document.getElementById('{BOTTOM_ELEMENT_ID}').scrollIntoView()"
-        )
+INITIAL_UPDATE_INTERVAL_MS = 200
 
 
 class MessageGenerator(rx.State):
-    messages: list[str]
-    should_load: bool = False
+    messages: list[str] = ["Hello, world!"]
+    update_interval_ms: int = INITIAL_UPDATE_INTERVAL_MS
 
-    def on_load(self):
-        self.messages = ["Hello, world!"]
-        self.should_load = True
-        return MessageGenerator.add_messages
-
-    @rx.background
-    async def add_messages(self):
-        while self.should_load:
-            async with self:
-                self.messages.append(f"New message {len(self.messages) + 1}!")
-                if not self.should_load:
-                    break
-            await asyncio.sleep(min(len(self.messages) / 20, 3))
+    @rx.event
+    def add_message(self):
+        self.messages.append(f"New message {len(self.messages) + 1}!")
+        if self.update_interval_ms > 0:
+            self.update_interval_ms = int(min(len(self.messages) / 20, 3) * 1000)
 
 
 def message_control_button():
     return rx.cond(
-        MessageGenerator.should_load,
-        rx.button("Stop", on_click=MessageGenerator.set_should_load(False)),
+        MessageGenerator.update_interval_ms > 0,
+        rx.button("Stop", on_click=MessageGenerator.set_update_interval_ms(0)),
         rx.button(
             "Start",
             on_click=[
-                MessageGenerator.set_should_load(True),
-                MessageGenerator.add_messages,
+                MessageGenerator.set_update_interval_ms(INITIAL_UPDATE_INTERVAL_MS),
             ],
         ),
     )
@@ -54,8 +37,12 @@ def page() -> rx.Component:
         rx.hstack(
             message_control_button(),
             rx.icon_button(
+                rx.icon("plus"),
+                on_click=MessageGenerator.add_message,
+            ),
+            rx.icon_button(
                 rx.icon("arrow_down_to_line"),
-                on_click=ScrollHandlingState.scroll_to_bottom,
+                on_click=rx.scroll_to(BOTTOM_ELEMENT_ID),
             ),
         ),
         rx.scroll_area(
@@ -65,18 +52,24 @@ def page() -> rx.Component:
                     height="1px",
                     id=BOTTOM_ELEMENT_ID,
                     root="#scroller",
-                    on_non_intersect=ScrollHandlingState.scroll_to_bottom(),
+                    # Remove lambda after reflex-dev/reflex#4552
+                    on_non_intersect=lambda _: rx.scroll_to(BOTTOM_ELEMENT_ID),
                     # The target object doesn't need to be visible.
                     # visibility="hidden",
-                    border=f"1px solid {rx.color("accent", 12)}",
+                    border=f"1px solid {rx.color('accent', 12)}",
                 ),
                 spacing="3",
                 font_size="2em",
             ),
             id="scroller",
-            border=f"1px solid {rx.color("accent", 12)}",
+            border=f"1px solid {rx.color('accent', 12)}",
             width="85vw",
             height="75vh",
+        ),
+        rx.moment(
+            interval=MessageGenerator.update_interval_ms,
+            on_change=MessageGenerator.add_message.temporal,
+            display="none",
         ),
         rx.text("This is outside scroll area"),
         rx.link("Infinite Scroll Demo", href="/"),

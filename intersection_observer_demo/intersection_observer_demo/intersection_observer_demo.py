@@ -1,8 +1,11 @@
 import reflex as rx
 
-from reflex_intersection_observer import intersection_observer
+from reflex_intersection_observer import (
+    intersection_observer,
+    IntersectionObserverEntry,
+)
 
-from . import scroll_to_bottom
+from . import readme, scroll_to_bottom
 
 
 BATCH_SIZE = 15
@@ -12,10 +15,12 @@ BOTTOM_ELEMENT_ID = "bottom"
 class State(rx.State):
     items: list[str] = [f"Item {ix}" for ix in range(BATCH_SIZE)]
 
+    @rx.event
     def reset_items(self):
         self.reset()
 
-    def handle_intersect(self, entry):
+    @rx.event
+    def handle_intersect(self, entry: IntersectionObserverEntry):
         print(f"Intersected! {entry} Load more items.")
         self.items.extend(
             [
@@ -24,7 +29,8 @@ class State(rx.State):
             ]
         )
 
-    def handle_non_intersect(self, entry):
+    @rx.event
+    def handle_non_intersect(self, entry: IntersectionObserverEntry):
         print(f"Non-intersected! {entry}")
 
 
@@ -39,9 +45,7 @@ def index() -> rx.Component:
             ),
             rx.icon_button(
                 rx.icon("arrow_down_to_line"),
-                on_click=rx.call_script(
-                    f"document.getElementById('{BOTTOM_ELEMENT_ID}').scrollIntoView()"
-                ),
+                on_click=rx.scroll_to(BOTTOM_ELEMENT_ID),
             ),
         ),
         rx.scroll_area(
@@ -64,7 +68,7 @@ def index() -> rx.Component:
             ),
             type="hover",
             id="scroller",
-            border=f"1px solid {rx.color("accent", 12)}",
+            border=f"1px solid {rx.color('accent', 12)}",
             width="85vw",
             height="75vh",
         ),
@@ -79,5 +83,8 @@ app.add_page(index)
 app.add_page(
     scroll_to_bottom.page,
     route="/scroll-to-bottom",
-    on_load=scroll_to_bottom.MessageGenerator.on_load,
+)
+app.add_page(
+    readme.page,
+    route="/readme",
 )
