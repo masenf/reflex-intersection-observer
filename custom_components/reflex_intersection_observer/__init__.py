@@ -1,11 +1,11 @@
 from .intersection_observer import (
-    intersection_observer,
     IntersectionObserver,
     IntersectionObserverEntry,
+    intersection_observer,
 )
 
 __all__ = [
-    "intersection_observer",
     "IntersectionObserver",
     "IntersectionObserverEntry",
+    "intersection_observer",
 ]

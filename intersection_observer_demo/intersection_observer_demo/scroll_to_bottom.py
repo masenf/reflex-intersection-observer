@@ -1,7 +1,5 @@
 import reflex as rx
-
 from reflex_intersection_observer import intersection_observer
-
 
 BOTTOM_ELEMENT_ID = "bottom"
 INITIAL_UPDATE_INTERVAL_MS = 200
@@ -16,6 +14,10 @@ class MessageGenerator(rx.State):
         self.messages.append(f"New message {len(self.messages) + 1}!")
         if self.update_interval_ms > 0:
             self.update_interval_ms = int(min(len(self.messages) / 20, 3) * 1000)
+
+    @rx.event
+    def set_update_interval_ms(self, interval_ms: int):
+        self.update_interval_ms = interval_ms
 
 
 def message_control_button():
@@ -54,8 +56,6 @@ def page() -> rx.Component:
                     root="#scroller",
                     # Remove lambda after reflex-dev/reflex#4552
                     on_non_intersect=lambda _: rx.scroll_to(BOTTOM_ELEMENT_ID),
-                    # The target object doesn't need to be visible.
-                    # visibility="hidden",
                     border=f"1px solid {rx.color('accent', 12)}",
                 ),
                 spacing="3",
@@ -68,7 +68,7 @@ def page() -> rx.Component:
         ),
         rx.moment(
             interval=MessageGenerator.update_interval_ms,
-            on_change=MessageGenerator.add_message.temporal,
+            on_change=MessageGenerator.add_message.temporal,  # pyright: ignore[reportAttributeAccessIssue]
             display="none",
         ),
         rx.text("This is outside scroll area"),

@@ -1,19 +1,17 @@
 import reflex as rx
-
 from reflex_intersection_observer import (
-    intersection_observer,
     IntersectionObserverEntry,
+    intersection_observer,
 )
 
 from . import readme, repro_foreach, scroll_to_bottom
-
 
 BATCH_SIZE = 15
 BOTTOM_ELEMENT_ID = "bottom"
 
 
 class State(rx.State):
-    items: list[str] = [f"Item {ix}" for ix in range(BATCH_SIZE)]
+    items: rx.Field[list[str]] = rx.field([f"Item {ix}" for ix in range(BATCH_SIZE)])
 
     @rx.event
     def reset_items(self):
@@ -21,7 +19,7 @@ class State(rx.State):
 
     @rx.event
     def handle_intersect(self, entry: IntersectionObserverEntry):
-        print(f"Intersected! {entry} Load more items.")
+        print(f"Intersected! {entry} Load more items.")  # noqa: T201
         self.items.extend(
             [
                 f"Item {ix}"
@@ -31,7 +29,7 @@ class State(rx.State):
 
     @rx.event
     def handle_non_intersect(self, entry: IntersectionObserverEntry):
-        print(f"Non-intersected! {entry}")
+        print(f"Non-intersected! {entry}")  # noqa: T201
 
 
 def index() -> rx.Component:
@@ -60,7 +58,7 @@ def index() -> rx.Component:
                     on_intersect=State.handle_intersect,
                     on_non_intersect=State.handle_non_intersect,
                     # The target object doesn't need to be visible.
-                    # visibility="hidden"
+                    # visibility="hidden"  # noqa: ERA001
                 ),
                 justify="start",
                 spacing="3",

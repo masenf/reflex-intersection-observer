@@ -2,10 +2,8 @@
 
 from __future__ import annotations
 
-from jinja2 import Environment
-
 import reflex as rx
-
+from jinja2 import Environment
 
 INTERSECTION_OBSERVER_JS = """
 // reflex_intersection_observer.IntersectionObserver
@@ -73,40 +71,45 @@ class IntersectionObserver(rx.el.Div):
     def _exclude_props(self) -> list[str]:
         return ["root", "root_margin", "threshold", "on_intersect", "on_non_intersect"]
 
-    def _get_imports(self) -> dict[str, list[rx.utils.imports.ImportVar]]:
-        return rx.utils.imports.merge_imports(
-            super()._get_imports(),
-            {
-                "react": [
-                    rx.utils.imports.ImportVar(tag="useEffect"),
-                    rx.utils.imports.ImportVar(tag="useState"),
-                ],
-            },
-        )
+    def add_imports(self) -> rx.ImportDict | list[rx.ImportDict]:
+        return {
+            "react": [
+                rx.ImportVar(tag="useEffect"),
+                rx.ImportVar(tag="useState"),
+            ],
+        }
 
-    def _get_custom_code(self) -> str | None:
-        return """
+    def add_custom_code(self) -> list[str]:
+        return [
+            """
 const extractEntry = (entry) => ({
     intersection_ratio: entry.intersectionRatio,
     is_intersecting: entry.isIntersecting,
     time: entry.time,
 })"""
+        ]
 
-    def _get_hooks(self) -> str | None:
+    def add_hooks(self) -> list[str | rx.Var]:
         on_intersect = self.event_triggers.get("on_intersect")
         on_non_intersect = self.event_triggers.get("on_non_intersect")
         if on_intersect is None and on_non_intersect is None:
-            return None
-        on_intersect = rx.Var.create(on_intersect) if on_intersect is not None else "undefined"
-        on_non_intersect = rx.Var.create(on_non_intersect) if on_non_intersect is not None else "undefined"
-        return (
+            return []
+        on_intersect = (
+            rx.Var.create(on_intersect) if on_intersect is not None else "undefined"
+        )
+        on_non_intersect = (
+            rx.Var.create(on_non_intersect)
+            if on_non_intersect is not None
+            else "undefined"
+        )
+        return [
             Environment()
             .from_string(INTERSECTION_OBSERVER_JS)
             .render(
                 on_intersect=on_intersect,
                 on_non_intersect=on_non_intersect,
                 root=(
-                    f"document.querySelector({str(self.root)})"
+                    f"document.querySelector({self.root!s})"
                     if self.root is not None
                     else "document"
                 ),
@@ -114,7 +117,7 @@ const extractEntry = (entry) => ({
                 threshold=self.threshold,
                 ref=self.get_ref(),
             )
-        )
+        ]
 
 
 intersection_observer = IntersectionObserver.create
