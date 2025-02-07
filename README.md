@@ -51,7 +51,7 @@ Both of these events provide an `IntersectionObserverEntry` with intersection de
 
 * `intersection_ratio`: how much of the target element is intersection (0 - 1).
 * `is_intersecting`: true/false based on whether the observer is intersecting or not
-* `time`: relative timestamp when the intersection occured
+* `time`: relative timestamp when the intersection occurred
 
 See [IntersectionObserver API](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver)
 docs on MDN for more information about how the API works.

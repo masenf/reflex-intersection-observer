@@ -1,7 +1,5 @@
 import reflex as rx
-
 from reflex_intersection_observer import intersection_observer
-
 
 BOTTOM_ELEMENT_ID = "bottom"
 
@@ -22,8 +20,6 @@ def page():
                         threshold=0.9,
                         on_intersect=rx.toast("Intersected"),
                         on_non_intersect=rx.toast("Non-intersected"),
-                        # The target object doesn't need to be visible.
-                        # visibility="hidden"
                     ),
                 ),
                 justify="start",
