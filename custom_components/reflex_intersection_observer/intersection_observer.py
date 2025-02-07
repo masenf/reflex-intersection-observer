@@ -97,10 +97,8 @@ const extractEntry = (entry) => ({
         on_non_intersect = self.event_triggers.get("on_non_intersect")
         if on_intersect is None and on_non_intersect is None:
             return None
-        if on_intersect is None:
-            on_intersect = "undefined"
-        if on_non_intersect is None:
-            on_non_intersect = "undefined"
+        on_intersect = rx.Var.create(on_intersect) if on_intersect is not None else "undefined"
+        on_non_intersect = rx.Var.create(on_non_intersect) if on_non_intersect is not None else "undefined"
         return (
             Environment()
             .from_string(INTERSECTION_OBSERVER_JS)

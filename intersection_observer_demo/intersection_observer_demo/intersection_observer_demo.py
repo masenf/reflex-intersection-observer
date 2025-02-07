@@ -5,7 +5,7 @@ from reflex_intersection_observer import (
     IntersectionObserverEntry,
 )
 
-from . import readme, scroll_to_bottom
+from . import readme, repro_foreach, scroll_to_bottom
 
 
 BATCH_SIZE = 15
@@ -87,4 +87,8 @@ app.add_page(
 app.add_page(
     readme.page,
     route="/readme",
+)
+app.add_page(
+    repro_foreach.page,
+    route="/repro-foreach",
 )
