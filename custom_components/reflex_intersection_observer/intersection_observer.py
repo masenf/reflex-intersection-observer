@@ -11,10 +11,10 @@ const [enableObserver_{{ ref }}, setEnableObserver_{{ ref }}] = useState(1)
 useEffect(() => {
     if (!{{ root }} || !{{ ref }}.current) {
         // The root/target element is not found, so trigger the effect again, later.
-        if (!document.querySelector("#scroller")) {
-          console.log("Warning: observation root " + document.querySelector("#scroller") + " not found, will try again.")
+        if (!{{ root }}) {
+          console.log("Warning: observation root " + {{ root }} + " not found, will try again.")
         }
-        if (!ref_mid_target.current) {
+        if (!{{ ref }}.current) {
           console.log("Warning: observation target element not found, will try again.")
         }
         const timeout = setTimeout(
