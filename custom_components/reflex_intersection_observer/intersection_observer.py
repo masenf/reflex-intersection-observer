@@ -9,9 +9,14 @@ INTERSECTION_OBSERVER_JS = """
 // reflex_intersection_observer.IntersectionObserver
 const [enableObserver_{{ ref }}, setEnableObserver_{{ ref }}] = useState(1)
 useEffect(() => {
-    if (!{{ root }}) {
-        // The root element is not found, so trigger the effect again, later.
-        console.log("Warning: observation target " + {{ root }} + " not found, will try again.")
+    if (!{{ root }} || !{{ ref }}.current) {
+        // The root/target element is not found, so trigger the effect again, later.
+        if (!document.querySelector("#scroller")) {
+          console.log("Warning: observation root " + document.querySelector("#scroller") + " not found, will try again.")
+        }
+        if (!ref_mid_target.current) {
+          console.log("Warning: observation target element not found, will try again.")
+        }
         const timeout = setTimeout(
             () => setEnableObserver_{{ ref }}((cnt) => cnt + 1),
             enableObserver_{{ ref }} * 100,
@@ -38,7 +43,7 @@ useEffect(() => {
         observer.observe({{ ref }}.current)
         return () => observer.disconnect()
     }
-}, [ enableObserver_{{ ref }} ]);
+}, [ enableObserver_{{ ref }}, {{ ref }} ]);
 """
 
 
