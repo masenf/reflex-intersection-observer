@@ -1,6 +1,7 @@
 """Reflex custom component IntersectionObserver."""
 
 from __future__ import annotations
+import dataclasses
 
 import reflex as rx
 from jinja2 import Environment
@@ -47,7 +48,8 @@ useEffect(() => {
 """
 
 
-class IntersectionObserverEntry(rx.Base):
+@dataclasses.dataclass(frozen=True)
+class IntersectionObserverEntry:
     intersection_ratio: float
     is_intersecting: bool
     time: float
