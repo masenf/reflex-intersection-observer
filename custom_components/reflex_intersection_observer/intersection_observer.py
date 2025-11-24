@@ -1,6 +1,7 @@
 """Reflex custom component IntersectionObserver."""
 
 from __future__ import annotations
+
 import dataclasses
 
 import reflex as rx
